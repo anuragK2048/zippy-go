@@ -1,6 +1,6 @@
 // import { useAuth, useUser } from "@clerk/clerk-expo";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -15,6 +15,8 @@ import GoogleTextInput from "@/components/GoogleTextInput";
 import Map from "@/components/Map";
 import RideCard from "@/components/RideCard";
 import { icons, images } from "@/constants";
+import { useLocationStore } from "@/store";
+import * as Location from "expo-location";
 
 const rides = [
   {
@@ -126,6 +128,7 @@ const rides = [
 const Home = () => {
   // const { user } = useUser();
   // const { signOut } = useAuth();
+  const { setUserLocation, setDestinationLocation } = useLocationStore();
 
   const handleSignOut = () => {
     // signOut();
@@ -133,6 +136,30 @@ const Home = () => {
   };
 
   const [hasPermission, setHasPermission] = useState<boolean>(false);
+
+  useEffect(() => {
+    const requestLocation = async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setHasPermission(false);
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      console.log("location", location);
+
+      const address = await Location.reverseGeocodeAsync({
+        latitude: location.coords?.latitude!,
+        longitude: location.coords?.longitude!,
+      });
+
+      setUserLocation({
+        latitude: location.coords?.latitude!,
+        longitude: location.coords?.longitude!,
+        address: `${address[0].name}, ${address[0].region}`,
+      });
+    };
+    requestLocation();
+  }, []);
 
   const handleDestinationPress = () => {};
 
