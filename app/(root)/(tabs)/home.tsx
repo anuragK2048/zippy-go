@@ -161,7 +161,9 @@ const Home = () => {
     requestLocation();
   }, []);
 
-  const handleDestinationPress = () => {};
+  const handleDestinationPress = (latitude, longitude, address) => {
+    console.log(address);
+  };
 
   const loading = true;
 
@@ -207,8 +209,13 @@ const Home = () => {
               </TouchableOpacity>
             </View>
 
-            <GoogleTextInput
+            {/* <GoogleTextInput
               icon={icons.search}
+              containerStyle="bg-white shadow-md shadow-neutral-300"
+              handlePress={handleDestinationPress}
+            /> */}
+
+            <GoogleTextInput
               containerStyle="bg-white shadow-md shadow-neutral-300"
               handlePress={handleDestinationPress}
             />

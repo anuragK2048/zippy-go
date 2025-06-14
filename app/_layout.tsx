@@ -1,10 +1,10 @@
 // import { ClerkProvider } from "@clerk/clerk-expo";
 // import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
+import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import "react-native-get-random-values";
 import "react-native-reanimated";
 import "./global.css";
 

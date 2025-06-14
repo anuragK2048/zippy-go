@@ -1,0 +1,40 @@
+diff --git a/node_modules/react-native-google-places-autocomplete/GooglePlacesAutocomplete.js b/node_modules/react-native-google-places-autocomplete/GooglePlacesAutocomplete.js
+index 60836de..3227c67 100644
+--- a/node_modules/react-native-google-places-autocomplete/GooglePlacesAutocomplete.js
++++ b/node_modules/react-native-google-places-autocomplete/GooglePlacesAutocomplete.js
+@@ -2,15 +2,14 @@
+ import debounce from 'lodash.debounce';
+ import PropTypes from 'prop-types';
+ import Qs from 'qs';
+-import { v4 as uuidv4 } from 'uuid';
+-import React, {
++import {
+   forwardRef,
+-  useMemo,
++  useCallback,
+   useEffect,
+   useImperativeHandle,
++  useMemo,
+   useRef,
+   useState,
+-  useCallback,
+ } from 'react';
+ import {
+   ActivityIndicator,
+@@ -25,6 +24,7 @@ import {
+   TextInput,
+   View,
+ } from 'react-native';
++import { v4 as uuidv4 } from 'uuid';
+ 
+ const defaultStyles = {
+   container: {
+@@ -554,7 +554,7 @@ export const GooglePlacesAutocomplete = forwardRef((props, ref) => {
+     if (supportedPlatform() && text && text.length >= props.minLength) {
+       const request = new XMLHttpRequest();
+       _requests.push(request);
+-      request.timeout = props.timeout;
++      request.timeout = typeof props.timeout === 'number' ? props.timeout : 0;
+       request.ontimeout = props.onTimeout;
+       request.onreadystatechange = () => {
+         if (request.readyState !== 4) {
