@@ -140,6 +140,7 @@ const Map = () => {
       });
       // console.log("new markers", newMarkers);
       setMarkers(newMarkers);
+      setDrivers(drivers); // TODO
     }
   }, [drivers, userAddress]);
   return (
