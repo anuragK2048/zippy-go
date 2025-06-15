@@ -1,9 +1,12 @@
+import { images } from "@/constants";
 import { fetchAPI } from "@/lib/fetch";
 import { useLocationStore } from "@/store";
 import { PaymentProps } from "@/types/type";
 import { useStripe } from "@stripe/stripe-react-native";
+import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, View } from "react-native";
+import { Alert, Image, Text, View } from "react-native";
+import { ReactNativeModal } from "react-native-modal";
 import CustomButton from "./CustomButton";
 
 const Payment = ({
@@ -61,7 +64,7 @@ const Payment = ({
       //methods that complete payment after a delay, like SEPA Debit and Sofort.
       allowsDelayedPaymentMethods: true,
       defaultBillingDetails: {
-        name: "Anurag K",
+        name: "Zippy Go",
       },
     });
     if (!error) {
@@ -108,6 +111,33 @@ const Payment = ({
         className="my-10"
         onPress={openPaymentSheet}
       />
+
+      <ReactNativeModal
+        isVisible={success}
+        onBackdropPress={() => setSuccess(false)} // when user presses out of modal
+      >
+        <View className="flex flex-col items-center justify-center bg-white p-7 rounded-2xl">
+          <Image source={images.check} className="w-28 h-28 mt-5" />
+
+          <Text className="text-2xl text-center font-JakartaBold mt-5">
+            Booking placed successfully
+          </Text>
+
+          <Text className="text-md text-general-200 font-JakartaRegular text-center mt-3">
+            Thank you for your booking. Your reservation has been successfully
+            placed. Please proceed with your trip.
+          </Text>
+
+          <CustomButton
+            title="Back Home"
+            onPress={() => {
+              setSuccess(false);
+              router.push("/(root)/(tabs)/home");
+            }}
+            className="mt-5"
+          />
+        </View>
+      </ReactNativeModal>
     </View>
   );
 };
