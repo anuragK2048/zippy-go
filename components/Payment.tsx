@@ -81,7 +81,6 @@ const Payment = ({
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
       // Payment successful
-      // Alert.alert("Payment Successful");
       await fetchAPI("/(api)/(ride)/create", {
         method: "POST",
         headers: {
@@ -134,7 +133,7 @@ const Payment = ({
             title="Back Home"
             onPress={() => {
               setSuccess(false);
-              router.push("/(root)/(tabs)/home");
+              router.replace("/(root)/(tabs)/home");
             }}
             className="mt-5"
           />
