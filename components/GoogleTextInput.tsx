@@ -82,11 +82,11 @@ const GoogleTextInput = ({
 }: GoogleInputProps) => {
   const handlePlaceSelect = (place) => {
     console.log("Selected place:", place);
-    handlePress(
-      place.details.location.latitude,
-      place.details.location.longitude,
-      place.details.formattedAddress
-    );
+    handlePress({
+      latitude: place.details.location.latitude,
+      longitude: place.details.location.longitude,
+      address: place.details.formattedAddress,
+    });
   };
 
   return (

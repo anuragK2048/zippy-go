@@ -132,7 +132,7 @@ const Home = () => {
 
   const handleSignOut = () => {
     // signOut();
-    router.replace("/(auth)/sign-in");
+    router.replace("/(auth)/sign-in"); // replace, so user cant go back
   };
 
   const [hasPermission, setHasPermission] = useState<boolean>(false);
@@ -161,8 +161,9 @@ const Home = () => {
     requestLocation();
   }, []);
 
-  const handleDestinationPress = (latitude, longitude, address) => {
-    console.log(address);
+  const handleDestinationPress = (location) => {
+    setDestinationLocation(location);
+    router.push("/(root)/find-ride"); // push, so that user can go back
   };
 
   const loading = true;
