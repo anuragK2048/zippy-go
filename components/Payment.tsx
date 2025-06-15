@@ -1,4 +1,5 @@
 import { fetchAPI } from "@/lib/fetch";
+import { useLocationStore } from "@/store";
 import { PaymentProps } from "@/types/type";
 import { useStripe } from "@stripe/stripe-react-native";
 import { useState } from "react";
@@ -12,7 +13,16 @@ const Payment = ({
   driverId,
   rideTime,
 }: PaymentProps) => {
+  // const { userId } = useAuth(); // TODO
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
+  const {
+    userAddress,
+    userLongitude,
+    userLatitude,
+    destinationLatitude,
+    destinationAddress,
+    destinationLongitude,
+  } = useLocationStore();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -67,6 +77,25 @@ const Payment = ({
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
       // Payment successful
+      await fetchAPI("/(api)/ride/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          origin_address: userAddress,
+          destination_address: destinationAddress,
+          origin_latitude: userLatitude,
+          origin_longitude: userLongitude,
+          destination_latitude: destinationLatitude,
+          destination_longitude: destinationLongitude,
+          ride_time: rideTime.toFixed(0),
+          fare_price: parseInt(amount) * 100,
+          payment_status: "paid",
+          driver_id: driverId,
+          user_id: userId,
+        }),
+      });
       setSuccess(true);
     }
   };

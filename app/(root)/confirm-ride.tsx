@@ -123,7 +123,7 @@ const ConfirmRide = () => {
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (
           <DriverCard
-            item={item.driver} // TODO
+            item={item}
             selected={selectedDriver!}
             setSelected={() => setSelectedDriver(item.id!)}
           />
