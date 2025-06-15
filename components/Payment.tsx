@@ -2,6 +2,7 @@ import { images } from "@/constants";
 import { fetchAPI } from "@/lib/fetch";
 import { useLocationStore } from "@/store";
 import { PaymentProps } from "@/types/type";
+import { useAuth } from "@clerk/clerk-expo";
 import { useStripe } from "@stripe/stripe-react-native";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -16,7 +17,7 @@ const Payment = ({
   driverId,
   rideTime,
 }: PaymentProps) => {
-  // const { userId } = useAuth(); // TODO
+  const { userId } = useAuth();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const {
     userAddress,
@@ -80,7 +81,8 @@ const Payment = ({
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
       // Payment successful
-      await fetchAPI("/(api)/ride/create", {
+      // Alert.alert("Payment Successful");
+      await fetchAPI("/(api)/(ride)/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
