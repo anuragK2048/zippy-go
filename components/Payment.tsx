@@ -1,21 +1,33 @@
 import { fetchAPI } from "@/lib/fetch";
+import { PaymentProps } from "@/types/type";
 import { useStripe } from "@stripe/stripe-react-native";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Alert, View } from "react-native";
 import CustomButton from "./CustomButton";
 
-const publishableKey = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-
-const Payments = () => {
+const Payment = ({
+  fullName,
+  email,
+  amount,
+  driverId,
+  rideTime,
+}: PaymentProps) => {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const fetchPaymentSheetParams = async () => {
-    const result = await fetchAPI(`/(api)/payment-sheet`, {
+    const result = await fetchAPI(`/(api)/(stripe)/payment-sheet`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({
+        name: fullName || email.split("@")[0],
+        email: email,
+        amount: amount,
+        // paymentMethodId: paymentMethod.id,
+      }),
     });
     const { paymentIntent, ephemeralKey, customer } = result;
 
@@ -31,7 +43,7 @@ const Payments = () => {
       await fetchPaymentSheetParams();
 
     const { error } = await initPaymentSheet({
-      merchantDisplayName: "Example, Inc.",
+      merchantDisplayName: "Zippy Go Pvt Ltd",
       customerId: customer,
       customerEphemeralKeySecret: ephemeralKey,
       paymentIntentClientSecret: paymentIntent,
@@ -39,44 +51,36 @@ const Payments = () => {
       //methods that complete payment after a delay, like SEPA Debit and Sofort.
       allowsDelayedPaymentMethods: true,
       defaultBillingDetails: {
-        name: "Jane Doe",
+        name: "Anurag K",
       },
     });
     if (!error) {
-      setLoading(true);
+      setLoading(false);
     }
   };
 
   const openPaymentSheet = async () => {
+    await initializePaymentSheet();
     const { error } = await presentPaymentSheet();
 
     if (error) {
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
-      Alert.alert("Success", "Your order is confirmed!");
+      // Payment successful
+      setSuccess(true);
     }
   };
 
-  useEffect(() => {
-    initializePaymentSheet();
-  }, []);
-
   return (
-    // <StripeProvider
-    //   publishableKey={publishableKey!}
-    //   // merchantIdentifier="merchant.identifier" // required for Apple Pay
-    //   // urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
-    // >
     <View>
       <CustomButton
-        disabled={!loading}
+        disabled={loading}
         title="Confirm Ride"
         className="my-10"
         onPress={openPaymentSheet}
       />
     </View>
-    // </StripeProvider>
   );
 };
 
-export default Payments;
+export default Payment;

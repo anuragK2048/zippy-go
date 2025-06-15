@@ -1,11 +1,13 @@
 // import { useUser } from "@clerk/clerk-expo";
 import { Image, Text, View } from "react-native";
 
-import Payments from "@/components/Payments";
+import Payment from "@/components/Payment";
 import RideLayout from "@/components/RideLayout";
 import { icons } from "@/constants";
 import { formatTime } from "@/lib/utils";
 import { useDriverStore, useLocationStore } from "@/store";
+
+const publishableKey = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
 const BookRide = () => {
   // const { user } = useUser();
@@ -17,6 +19,11 @@ const BookRide = () => {
   )[0];
 
   return (
+    // <StripeProvider
+    //   publishableKey={publishableKey!}
+    //   merchantIdentifier="merchant.zippygo.com" // required for Apple Pay
+    //   urlScheme="zippygo" // required for 3D Secure and bank redirects
+    // >
     <RideLayout title="Book Ride">
       <>
         <Text className="text-xl font-JakartaSemiBold mb-3">
@@ -86,9 +93,16 @@ const BookRide = () => {
           </View>
         </View>
 
-        <Payments />
+        <Payment
+          fullName={user?.fullName!}
+          email={user?.emailAddresses[0].emailAddress!}
+          amount={driverDetails?.price!}
+          driverId={driverDetails?.id}
+          rideTime={driverDetails?.time!}
+        />
       </>
     </RideLayout>
+    // </StripeProvider>
   );
 };
 

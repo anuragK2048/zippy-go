@@ -4,21 +4,44 @@ const publishableKey = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY!;
 const stripe = new Stripe(secretKey);
 
 export async function POST(request: Request) {
-  // Use an existing Customer ID if this is a returning customer.
+  const body = await request.json();
+  const { name, email, amount } = body;
+
+  if (!name || !email || !amount) {
+    return new Response(JSON.stringify({ error: "Missing required fields" }), {
+      status: 400,
+    });
+  }
+
   try {
-    const customer = await stripe.customers.create();
+    // Use an existing Customer ID if this is a returning customer.
+    let customer;
+    const doesCustomerExist = await stripe.customers.list({
+      email,
+    });
+
+    if (doesCustomerExist.data.length > 0) {
+      customer = doesCustomerExist.data[0];
+    } else {
+      const newCustomer = await stripe.customers.create({
+        name,
+        email,
+      });
+
+      customer = newCustomer;
+    }
+
     const ephemeralKey = await stripe.ephemeralKeys.create(
       { customer: customer.id },
       { apiVersion: "2025-05-28.basil" }
     );
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 1099,
-      currency: "eur",
+      amount: parseInt(amount) * 100,
+      currency: "usd",
       customer: customer.id,
-      // In the latest version of the API, specifying the `automatic_payment_methods` parameter
-      // is optional because Stripe enables its functionality by default.
       automatic_payment_methods: {
         enabled: true,
+        allow_redirects: "never",
       },
     });
     return new Response(
