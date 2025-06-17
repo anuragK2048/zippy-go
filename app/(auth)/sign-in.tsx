@@ -5,7 +5,7 @@ import { icons, images } from "@/constants";
 import { useSignIn } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Alert, Image, ScrollView, Text, View } from "react-native";
 
 const SignIn = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -30,6 +30,7 @@ const SignIn = () => {
         await setActive({ session: signInAttempt.createdSessionId });
         router.replace("/");
       } else {
+        Alert.alert("Incorrect Email or/and Password");
         // If the status isn't complete, check why. User might need to
         // complete further steps.
         console.error(JSON.stringify(signInAttempt, null, 2));
@@ -38,6 +39,7 @@ const SignIn = () => {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
       console.error(JSON.stringify(err, null, 2));
+      Alert.alert("Incorrect Email or/and Password");
     }
   };
   return (
@@ -66,7 +68,7 @@ const SignIn = () => {
             secureTextEntry={true}
           />
           <CustomButton
-            title="Sign Up"
+            title="Sign In"
             onPress={onSignInPress}
             className="mt-6"
           />

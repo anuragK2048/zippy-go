@@ -17,6 +17,7 @@ import RideCard from "@/components/RideCard";
 import { icons, images } from "@/constants";
 import { useFetch } from "@/lib/fetch";
 import { useLocationStore } from "@/store";
+import { Ride } from "@/types/type";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import * as Location from "expo-location";
 
@@ -28,7 +29,7 @@ const Home = () => {
     data: recentRides,
     loading,
     error,
-  } = useFetch(`/(api)/(ride)/${user?.id}`);
+  } = useFetch<Ride[]>(`/(api)/(ride)/${user?.id}`);
 
   const handleSignOut = () => {
     signOut();
@@ -69,7 +70,7 @@ const Home = () => {
   return (
     <SafeAreaView className="bg-general-500">
       <FlatList
-        data={recentRides?.slice(0, 5)}
+        data={recentRides}
         renderItem={({ item }) => <RideCard ride={item} />}
         keyExtractor={(item, index) => index.toString()}
         className="px-5"
